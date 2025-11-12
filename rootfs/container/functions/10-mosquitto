@@ -13,22 +13,22 @@ mosquitto_bootstrap_filesystem() {
 
     case "${LOG_TYPE,,}" in
         both | file )
-            create_logrotate mosquitto "${LOG_PATH}"/"${LOG_FILE}" none "${MOSQUITTO_USER}" "${MOSQUITTO_GROUP}"
+            create_logrotate mosquitto "${LOG_PATH%/}"/"${LOG_FILE}" none "${MOSQUITTO_USER}" "${MOSQUITTO_GROUP}"
         ;;
     esac
 
-    if [ ! -f "${SECURITY_PASSWORD_PATH}"/"${SECURITY_PASSWORD_FILE}" ]; then
+    if [ ! -f "${SECURITY_PASSWORD_PATH%/}"/"${SECURITY_PASSWORD_FILE}" ]; then
         sudo -u "${MOSQUITTO_USER}" mkdir -p "${SECURITY_PASSWORD_PATH}"
-        sudo -u "${MOSQUITTO_USER}" touch "${SECURITY_PASSWORD_PATH}"/"${SECURITY_PASSWORD_FILE}"
+        sudo -u "${MOSQUITTO_USER}" touch "${SECURITY_PASSWORD_PATH%/}"/"${SECURITY_PASSWORD_FILE}"
     fi
 
-    chmod 0700 "${SECURITY_PASSWORD_PATH}"/"${SECURITY_PASSWORD_FILE}"
+    chmod 0700 "${SECURITY_PASSWORD_PATH%/}"/"${SECURITY_PASSWORD_FILE}"
 
-    if [ "$(stat -c %U "${SECURITY_PASSWORD_PATH}"/"${SECURITY_PASSWORD_FILE}")" != "${MOSQUITTO_USER}" ] ; then chown -R "${MOSQUITTO_USER}":"${MOSQUITTO_GROUP}" "${SECURITY_PASSWORD_PATH}" ; fi
+    if [ "$(stat -c %U "${SECURITY_PASSWORD_PATH%/}"/"${SECURITY_PASSWORD_FILE}")" != "${MOSQUITTO_USER}" ] ; then chown -R "${MOSQUITTO_USER}":"${MOSQUITTO_GROUP}" "${SECURITY_PASSWORD_PATH}" ; fi
 }
 
 mosquitto_generate_config() {
-    touch "${CONFIG_PATH}"/"${CONFIG_FILE}"
+    touch "${CONFIG_PATH%/}"/"${CONFIG_FILE}"
     if [ "${MOSQUITTO_SETUP_TYPE,,}" = "auto" ]; then
         case "${LOG_TYPE,,}" in
             both )
@@ -58,7 +58,7 @@ EOF
             ;;
         esac
 
-        cat <<EOF > "${CONFIG_PATH}"/"${CONFIG_FILE}"
+        cat <<EOF > "${CONFIG_PATH%/}"/"${CONFIG_FILE}"
 # Custom Generated Mosquitto Configuration - Do not edit, instead set ENV Vars
 # If you do want to edit this file and add your own custom, set the environment variable 'SETUP_TYPE=MANUAL' for next restart of container.
 # Last Generated on $(TZ=${TIMEZONE} date +'%Y-%m-%d %H:%M:%S %Z')
@@ -105,6 +105,6 @@ mosquitto_generate_authentication() {
         _credential_user=CREDENTIAL${num}_USER
         _credential_pass=CREDENTIAL${num}_PASS
         print_debug "Setting up credentials for user '${!_credential_user}'"
-        silent sudo -u "${MOSQUITTO_USER}" mosquitto_passwd -b "${SECURITY_PASSWORD_PATH}"/"${SECURITY_PASSWORD_FILE}" "${!_credential_user}" "${!_credential_pass}"
+        silent sudo -u "${MOSQUITTO_USER}" mosquitto_passwd -b "${SECURITY_PASSWORD_PATH%/}"/"${SECURITY_PASSWORD_FILE}" "${!_credential_user}" "${!_credential_pass}"
     done
 }

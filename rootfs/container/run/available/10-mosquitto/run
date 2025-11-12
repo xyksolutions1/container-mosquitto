@@ -17,4 +17,4 @@ liftoff
 
 print_start "Starting mosquitto $(mosquitto -h | head -n1 | awk '{print $3}')"
 exec mosquitto \
-                -c "${CONFIG_PATH}"/"${CONFIG_FILE}"
+                -c "${CONFIG_PATH%/}"/"${CONFIG_FILE}"
