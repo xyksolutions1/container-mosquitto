@@ -1,3 +1,10 @@
+## 0.5.0 2026-02-01 <code at nfastack dot com>
+
+   ### Added
+      - Mosquitto 2.1.0
+      - Alpine 3.2.3 base
+
+
 ## 0.4.0 2025-09-09 <code at nfrastack dot com>
 
    ### Added

@@ -19,7 +19,7 @@ LABEL \
 
 ARG \
     MOSQUITTO_REPO_URL="https://github.com/eclipse/mosquitto" \
-    MOSQUITTO_VERSION="v2.0.22"
+    MOSQUITTO_VERSION="v2.1.0"
 
 COPY CHANGELOG.md /usr/src/container/CHANGELOG.md
 COPY LICENSE /usr/src/container/LICENSE
@@ -32,20 +32,30 @@ ENV \
 
 RUN echo "" && \
     MOSQUITTO_BUILD_DEPS_ALPINE=" \
+                            argon2-dev \
                             build-base \
                             c-ares-dev \
                             cjson-dev \
+                            coreutils \
                             docbook-xsl \
+                            libedit-dev \
+                            libmicrohttpd-dev \
                             libwebsockets-dev \
                             libxslt-dev \
+                            linux-headers \
                             openssl-dev \
+                            sqlite-dev \
                             util-linux-dev \
                         " \
                         && \
     MOSQUITTO_RUN_DEPS_ALPINE=" \
+                            argon2-libs \
+                            cjson \
+                            libmicrohttpd \
                             libwebsockets \
                             libxslt \
                             openssl \
+                            sqlite-libs \
                         " \
                         && \
     \
@@ -62,11 +72,12 @@ RUN echo "" && \
     cd /usr/src/mosquitto && \
     make \
             -j$(nproc) \
-            WITH_MEMORY_TRACKING=no \
-            WITH_WEBSOCKETS=yes \
-            WITH_CJSON=yes \
-            WITH_SRV=yes \
             WITH_ADNS=no \
+            WITH_CJSON=yes \
+            WITH_MEMORY_TRACKING=no \
+            WITH_SRV=yes \
+            WITH_STRIP=yes \
+            WITH_WEBSOCKETS=yes \
             prefix=/usr \
             install \
             && \
