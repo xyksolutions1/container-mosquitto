@@ -1,7 +1,7 @@
 
 ## About
 
-This will build a container for [Mosquitto](https://www.mosquitto.org). A MQTT broker.data.
+This will build a container for [Mosquitto](https://www.mosquitto.org), A MQTT broker.
 
 
 ## Maintainer
